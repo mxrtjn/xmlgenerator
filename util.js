@@ -62,15 +62,25 @@ const MAPPING_COLUMNS = {
   "Casos de Prueba": "testcase",
   "Descripcion del Caso de Prueba": "summary",
   "Pre - Condiciones": "preconditions",
-  //"Datos de Prueba": "",
+  Prioridad: "importance",
   Pasos: "steps",
-  //"Resultado Esperado": "",
-  //"Post - Condiciones": ""
-  Prioridad: "importance"
-  //"Regresion (S/N)": ""
-  //"Escenarios Vinculados": "",
-  //Comentarios: ""
+  //items below are custom_fields
+  "Datos de Prueba": "datos_de_prueba",
+  "Resultado Esperado": "resultado_esperado",
+  "Post - Condiciones": "post_condiciones",
+  "Regresion (S/N)": "regresion",
+  "Escenarios Vinculados": "escenarios_vinculados",
+  Comentarios: "comentarios"
 };
+const CUSTOM_FIELD_COLUMNS = [
+  "datos_de_prueba",
+  "resultado_esperado",
+  "post_condiciones",
+  "regresion",
+  "escenarios_vinculados",
+  "comentarios"
+];
+
 const generateCDATA = value => `<![CDATA[${value}]]>`;
 const sanitizeText = (value = "", keepNewLine) => {
   if (keepNewLine) {
@@ -108,7 +118,7 @@ const convertSheetToObject = (workbook, firstLimit, lastLimit) => {
   }
   const result = [];
   for (let i = rowLimit[0] + 1; i <= rowLimit[1]; i++) {
-    const item = {};
+    const item = { custom_fields: [] };
     columns.forEach(column => {
       const cellValue = table[`${column.columnLetter}${i}`];
       if (column.columnValue === "steps") {
@@ -116,7 +126,15 @@ const convertSheetToObject = (workbook, firstLimit, lastLimit) => {
           ? cellValue.v.split("\n").map(stp => stp.replace(/^\d+\.\s*/, ""))
           : [];
       } else {
-        item[column.columnValue] = cellValue && cellValue.v;
+        if (CUSTOM_FIELD_COLUMNS.includes(column.columnValue)) {
+          item.custom_fields.push({
+            key: column.columnValue,
+            value: cellValue && cellValue.v
+          });
+        }
+        {
+          item[column.columnValue] = cellValue && cellValue.v;
+        }
       }
     });
     const testsuiteIndex = result.findIndex(
@@ -177,6 +195,19 @@ const convertObjectToXML = escenarios => {
 
       XML.BeginNode("importance");
       XML.WriteString(generateCDATA(testcase.importance));
+      XML.EndNode();
+
+      XML.BeginNode("custom_fields");
+      testcase.custom_fields.forEach(customField => {
+        XML.BeginNode("custom_field");
+        XML.BeginNode("name");
+        XML.WriteString(generateCDATA(customField.key));
+        XML.EndNode();
+        XML.BeginNode("value");
+        XML.WriteString(generateCDATA(customField.value));
+        XML.EndNode();
+        XML.EndNode();
+      });
       XML.EndNode();
 
       XML.BeginNode("steps");
