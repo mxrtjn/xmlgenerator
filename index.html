@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
     <script src="https://cdn.jotfor.ms/file-uploader/fileuploader.js?v=3.3.21226"></script>
     <script src="resource/XMLWriter.js" language="javascript"></script>
-    <script src="util.js?12" language="javascript"></script>
+    <script src="util.js?112" language="javascript"></script>
     <script>
       ////////////////////////////////
       var ExcelToJSON = function() {
@@ -33,10 +33,11 @@
             );
             const XMLResult = convertObjectToXML(scenarios);
             jQuery("#txt_xml_result").val(
-              XMLResult.ToString()
-                .replace(/</g, "\n<")
-                .replace(/&lt;/g, "<")
-                .replace(/&gt;/g, ">")
+              '<?xml version="1.0" encoding="ISO-8859-1"?>\n' +
+                XMLResult.ToString()
+                  .replace(/</g, "\n<")
+                  .replace(/&lt;/g, "<")
+                  .replace(/&gt;/g, ">")
             );
             window.scrollBy(0, 400);
           };
