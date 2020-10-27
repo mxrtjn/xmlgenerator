@@ -56,22 +56,31 @@ const SHEET_COLUMNS_ALT = {
 };
 
 const MAPPING_COLUMNS = {
+  "ID CP": "id_casoprueba",
   Escenario: "testsuite",
   "Descripcion del Escenario": "details",
   "Casos de Prueba": "testcase",
   "Descripcion del Caso de Prueba": "summary",
   "Pre - Condiciones": "preconditions",
   //"Datos de Prueba": "",
-  Pasos: "steps"
+  Pasos: "steps",
   //"Resultado Esperado": "",
   //"Post - Condiciones": ""
-  //Prioridad: "importance",
+  Prioridad: "importance"
   //"Regresion (S/N)": ""
   //"Escenarios Vinculados": "",
   //Comentarios: ""
 };
 const generateCDATA = value => `<![CDATA[${value}]]>`;
-const sanitazeText = value => value;
+const sanitizeText = (value = "", keepNewLine) => {
+  if (keepNewLine) {
+    value = value
+      .split("\n")
+      .map(item => `<p>${item}</p>`)
+      .join(" ");
+  }
+  return value;
+};
 
 const convertSheetToObject = (workbook, firstLimit, lastLimit) => {
   const rowLimit = [
@@ -102,7 +111,13 @@ const convertSheetToObject = (workbook, firstLimit, lastLimit) => {
     const item = {};
     columns.forEach(column => {
       const cellValue = table[`${column.columnLetter}${i}`];
-      item[column.columnValue] = cellValue && cellValue.v;
+      if (column.columnValue === "steps") {
+        item[column.columnValue] = cellValue
+          ? cellValue.v.split("\n").map(stp => stp.replace(/^\d+\.\s*/, ""))
+          : [];
+      } else {
+        item[column.columnValue] = cellValue && cellValue.v;
+      }
     });
     const testsuiteIndex = result.findIndex(
       a => a.testsuite === item.testsuite
@@ -122,6 +137,7 @@ const convertSheetToObject = (workbook, firstLimit, lastLimit) => {
 };
 
 const convertObjectToXML = escenarios => {
+  console.log("escenarios: ", escenarios);
   var XML = new XMLWriter();
   XML.BeginNode("testsuite");
   XML.Attrib("name", "");
@@ -138,12 +154,14 @@ const convertObjectToXML = escenarios => {
 
     escenario.testCases.forEach(testcase => {
       XML.BeginNode("testcase");
-      XML.Attrib("name", testcase.testcase);
+      XML.Attrib("name", `${testcase.id_casoprueba} - ${testcase.testcase}`);
       XML.BeginNode("summary");
       XML.WriteString(generateCDATA(testcase.testcase));
       XML.EndNode();
       XML.BeginNode("preconditions");
-      XML.WriteString(generateCDATA(testcase.preconditions));
+      XML.WriteString(
+        generateCDATA(sanitizeText(testcase.preconditions, true))
+      );
       XML.EndNode("preconditions");
       XML.BeginNode("status");
       XML.WriteString("1");
@@ -158,7 +176,23 @@ const convertObjectToXML = escenarios => {
       XML.EndNode();
 
       XML.BeginNode("importance");
-      XML.WriteString(generateCDATA("3"));
+      XML.WriteString(generateCDATA(testcase.importance));
+      XML.EndNode();
+
+      XML.BeginNode("steps");
+      testcase.steps.forEach((step, index) => {
+        XML.BeginNode("step");
+        XML.BeginNode("step_number");
+        XML.WriteString(generateCDATA(`${index + 1}`));
+        XML.EndNode();
+        XML.BeginNode("actions");
+        XML.WriteString(generateCDATA(step));
+        XML.EndNode();
+        XML.BeginNode("execution_type");
+        XML.WriteString(generateCDATA("1"));
+        XML.EndNode();
+        XML.EndNode(); //end step node
+      });
       XML.EndNode();
 
       XML.EndNode(); //end of testcase node
