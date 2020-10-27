@@ -60,9 +60,9 @@ const MAPPING_COLUMNS = {
   "Descripcion del Escenario": "details",
   "Casos de Prueba": "testcase",
   "Descripcion del Caso de Prueba": "summary",
-  "Pre - Condiciones": "preconditions"
+  "Pre - Condiciones": "preconditions",
   //"Datos de Prueba": "",
-  //"Pasos": "",
+  Pasos: "steps"
   //"Resultado Esperado": "",
   //"Post - Condiciones": ""
   //Prioridad: "importance",
@@ -127,6 +127,7 @@ const convertObjectToXML = escenarios => {
   XML.Attrib("name", "");
   XML.BeginNode("details");
   XML.WriteString(generateCDATA(""));
+  XML.EndNode();
   escenarios.forEach(escenario => {
     XML.BeginNode("testsuite");
     XML.Attrib("name", escenario.testsuite);
@@ -142,14 +143,18 @@ const convertObjectToXML = escenarios => {
       XML.WriteString(generateCDATA(testcase.testcase));
       XML.EndNode();
       XML.BeginNode("preconditions");
-      XML.WriteString(generateCDATA(""));
+      XML.WriteString(generateCDATA(testcase.preconditions));
       XML.EndNode("preconditions");
       XML.BeginNode("status");
-      XML.WriteString(generateCDATA("1"));
+      XML.WriteString("1");
       XML.EndNode();
 
       XML.BeginNode("execution_type");
       XML.WriteString(generateCDATA("1"));
+      XML.EndNode();
+
+      XML.BeginNode("estimated_exec_duration");
+      XML.WriteString(generateCDATA("5"));
       XML.EndNode();
 
       XML.BeginNode("importance");
