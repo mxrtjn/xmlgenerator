@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
     <script src="https://cdn.jotfor.ms/file-uploader/fileuploader.js?v=3.3.21226"></script>
     <script src="resource/XMLWriter.js" language="javascript"></script>
-    <script src="util.js?new_" language="javascript"></script>
+    <script src="util.js?new1_" language="javascript"></script>
     <script>
       var ExcelToJSON = function() {
         this.parseExcel = function(file) {
@@ -18,8 +18,12 @@
           var reader = new FileReader();
           reader.onload = function(e) {
             $("#block_xml_result").css("display", "block");
-            const firstLimit = $("#first_3").val();
-            const lastLimit = $("#last_3").val();
+            const firstLimit = $("#first_3")
+              .val()
+              .toUpperCase();
+            const lastLimit = $("#last_3")
+              .val()
+              .toUpperCase();
             var data = e.target.result;
             var workbook = XLSX.read(data, {
               type: "binary"
@@ -32,7 +36,7 @@
             );
             const XMLResult = convertObjectToXML(scenarios);
             jQuery("#txt_xml_result").val(
-              '<?xml version="1.0" encoding="ISO-8859-1"?>\n' +
+              '<?xml version="1.0" encoding="utf-8"?>' +
                 XMLResult.ToString()
                   .replace(/</g, "\n<")
                   .replace(/&lt;/g, "<")
