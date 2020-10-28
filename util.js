@@ -68,7 +68,7 @@ const MAPPING_COLUMNS = {
   "Datos de Prueba": "datos_de_prueba",
   "Resultado Esperado": "resultado_esperado",
   "Post - Condiciones": "post_condiciones",
-  "Regresion (S/N)": "regresion",
+  "Regresion\n(S/N)": "regresion",
   "Escenarios Vinculados": "escenarios_vinculados",
   Comentarios: "comentarios"
 };
