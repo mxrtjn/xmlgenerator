@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
     <script src="https://cdn.jotfor.ms/file-uploader/fileuploader.js?v=3.3.21226"></script>
     <script src="resource/XMLWriter.js" language="javascript"></script>
-    <script src="util.js?new_last" language="javascript"></script>
+    <script src="util.js?new_" language="javascript"></script>
     <script>
       var ExcelToJSON = function() {
         this.parseExcel = function(file) {
@@ -323,7 +323,7 @@
             id="label_xml_result"
             for="txt_xml_result"
           >
-            XML Generado:
+            <b>XML Generado:</b>
             <button
               class="form-submit-button submit-button jf-form-buttons jsTest-submitField"
               data-component="button"
@@ -342,6 +342,7 @@
               />
             </button>
           </label>
+          <label id="informationCounterText"> </label>
           <div id="cid_9" class="form-input-wide" data-layout="full">
             <textarea
               id="txt_xml_result"

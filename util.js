@@ -1,4 +1,6 @@
 let filenameXML = "filename";
+let informationCounterText = "";
+let nroCasosPruebas = 0;
 
 const SHEET_COLUMNS = {
   A: 1,
@@ -95,6 +97,7 @@ const sanitizeText = (value = "", keepNewLine) => {
 };
 
 const convertSheetToObject = (workbook, firstLimit, lastLimit) => {
+  nroCasosPruebas = 0;
   const rowLimit = [
     parseInt(firstLimit.replace(/^\D+/g, "")),
     parseInt(lastLimit.replace(/^\D+/g, ""))
@@ -104,7 +107,7 @@ const convertSheetToObject = (workbook, firstLimit, lastLimit) => {
     SHEET_COLUMNS[lastLimit.replace(rowLimit[1], "")]
   ];
 
-  const table = workbook.Sheets["Especificacion de CP"];
+  const [table] = Object.values(workbook.Sheets);
   const columns = [];
   for (let i = columnLimit[0]; i <= columnLimit[1]; i++) {
     const columnName = table[`${SHEET_COLUMNS_ALT[i]}${rowLimit[0]}`].v;
@@ -120,6 +123,7 @@ const convertSheetToObject = (workbook, firstLimit, lastLimit) => {
   }
   const result = [];
   for (let i = rowLimit[0] + 1; i <= rowLimit[1]; i++) {
+    nroCasosPruebas++;
     const item = { custom_fields: [] };
     columns.forEach(column => {
       const cellValue = table[`${column.columnLetter}${i}`];
@@ -157,6 +161,9 @@ const convertSheetToObject = (workbook, firstLimit, lastLimit) => {
 };
 
 const convertObjectToXML = escenarios => {
+  $("#informationCounterText").html(
+    `Se han encontrado <b>${escenarios.length} escenario(s)</b> y <b>${nroCasosPruebas} caso(s) de prueba(s)</b>.`
+  );
   var XML = new XMLWriter();
   XML.BeginNode("testsuite");
   XML.Attrib("name", "");
