@@ -8,9 +8,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
     <script src="https://cdn.jotfor.ms/file-uploader/fileuploader.js?v=3.3.21226"></script>
     <script src="resource/XMLWriter.js" language="javascript"></script>
-    <script src="util.js?112" language="javascript"></script>
+    <script src="util.js?new_last" language="javascript"></script>
     <script>
-      ////////////////////////////////
       var ExcelToJSON = function() {
         this.parseExcel = function(file) {
           if (!file) {
@@ -55,7 +54,6 @@
         downloadXML(
           jQuery("#txt_xml_result")
             .val()
-            .replace(/</g, "\n<")
             .replace(/&lt;/g, "<")
             .replace(/&gt;/g, ">")
         );
@@ -64,6 +62,10 @@
       function handleFileSelect(evt) {
         var files = evt.target.files; // FileList object
         var xl2json = new ExcelToJSON();
+        filenameXML = files[0].name
+          .split(".")
+          .slice(0, -1)
+          .join(".");
         xl2json.parseExcel(files[0]);
       }
     </script>

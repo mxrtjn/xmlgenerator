@@ -1,3 +1,5 @@
+let filenameXML = "filename";
+
 const SHEET_COLUMNS = {
   A: 1,
   B: 2,
@@ -155,7 +157,6 @@ const convertSheetToObject = (workbook, firstLimit, lastLimit) => {
 };
 
 const convertObjectToXML = escenarios => {
-  console.log("escenarios: ", escenarios);
   var XML = new XMLWriter();
   XML.BeginNode("testsuite");
   XML.Attrib("name", "");
@@ -233,16 +234,14 @@ const convertObjectToXML = escenarios => {
   });
   XML.EndNode();
   XML.Close();
-  //console.log("XML", XML.ToString().replace(/</g, "\n<"));
   return XML;
 };
 
 const downloadXML = xmltext => {
-  const filename = "file.xml";
   const pom = document.createElement("a");
   const bb = new Blob([xmltext], { type: "text/plain" });
   pom.setAttribute("href", window.URL.createObjectURL(bb));
-  pom.setAttribute("download", filename);
+  pom.setAttribute("download", `${filenameXML}.xml`);
   pom.dataset.downloadurl = ["text/plain", pom.download, pom.href].join(":");
   pom.draggable = true;
   pom.classList.add("dragout");
