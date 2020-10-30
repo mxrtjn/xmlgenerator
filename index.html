@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
     <script src="https://cdn.jotfor.ms/file-uploader/fileuploader.js?v=3.3.21226"></script>
     <script src="resource/XMLWriter.js" language="javascript"></script>
-    <script src="util.js?new1_" language="javascript"></script>
+    <script src="util.js?new1_1" language="javascript"></script>
     <script>
       var ExcelToJSON = function() {
         this.parseExcel = function(file) {
@@ -18,17 +18,19 @@
           var reader = new FileReader();
           reader.onload = function(e) {
             $("#block_xml_result").css("display", "block");
+            var data = e.target.result;
+            var workbook = XLSX.read(data, {
+              type: "binary"
+            });
+            const limitsGrid = getLimitsByWorkbook(workbook);
+            $("#last_3").val(limitsGrid[1]);
+
             const firstLimit = $("#first_3")
               .val()
               .toUpperCase();
             const lastLimit = $("#last_3")
               .val()
               .toUpperCase();
-            var data = e.target.result;
-            var workbook = XLSX.read(data, {
-              type: "binary"
-            });
-
             const scenarios = convertSheetToObject(
               workbook,
               firstLimit,
@@ -94,7 +96,12 @@
           data-type="control_fullname"
           id="id_3"
         >
-          <label class="form-label form-label-top" id="label_3" for="first_3">
+          <label
+            class="form-label form-label-top"
+            id="label_3"
+            for="first_3"
+            title="Incluir los nombres de columna."
+          >
             Limite de Tabla
           </label>
           <div id="cid_3" class="form-input-wide" data-layout="full">

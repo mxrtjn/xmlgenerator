@@ -96,6 +96,12 @@ const sanitizeText = (value = "", keepNewLine) => {
   return value;
 };
 
+const getLimitsByWorkbook = workbook => {
+  const [table] = Object.values(workbook.Sheets);
+  const cellPositionName = Object.keys(table);
+  return [cellPositionName[1], cellPositionName[cellPositionName.length - 2]];
+};
+
 const convertSheetToObject = (workbook, firstLimit, lastLimit) => {
   nroCasosPruebas = 0;
   const rowLimit = [
